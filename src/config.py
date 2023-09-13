@@ -1,4 +1,5 @@
 import json
+import configparser
 import os
 import sys
 import subprocess
@@ -23,25 +24,29 @@ def check_valid_key(key):
     return section, option
 
 
-def set_config(key, value, config):
+def set_config(key, value):
     section, option = check_valid_key(key)
 
+    config_file = os.path.join(os.getenv('LICHESS_HOME'), 'lichess.conf')
+    config = configparser.ConfigParser(inline_comment_prefixes=('#', ';'))
+    config.read(config_file)
+    config.set(section, option, value)
+    with open(config_file, 'w') as f:
+        config.write(f)
 
-def get_config(key, config):
+
+def get_config(key):
     section, option = check_valid_key(key)
-    print(config.get(section, option))
+    print(settings.get(section, option))
 
 
 def main(args, config):
     global settings
-
-    home = os.getenv('LICHESS_HOME')
-    config_file = os.path.join(home, 'lichess.conf')
     settings = config
 
     subcommand = args.subcommand
     if subcommand == 'set':
-        set_config(args.key[0], args.value, config)
+        set_config(args.key[0], args.value)
     elif subcommand == 'get':
-        get_config(args.key[0], config)
+        get_config(args.key[0])
     
