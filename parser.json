@@ -1,0 +1,205 @@
+{
+    "kwargs": {
+        "prog": "lichess",
+        "description": "Lichess CLI",
+        "epilog": "For more information, visit https://github.com/tenacke/lichess-cli"
+    },
+    "parser_type": "subparser",
+    "subparser": {
+        "kwargs": {
+            "dest": "command",
+            "metavar": "command",
+            "required": true
+        },
+        "subparsers": [
+            {
+                "kwargs": {
+                    "name": "token",
+                    "help": "Manage Lichess API token",
+                    "description": "Manage lichess API tokens (https://lichess.org/account/oauth/token)\nIt is possible to encrypt the token file with GPG by setting the gpg_enabled=true in config.json.\nIf the token file is encrypted, you will be asked for the passphrase when you run a command.\nYou can set the passphrase in config.json with the gpg_passphrase key or disable when creating the gpg key.\nPassphrase is stored in memory for 5 minutes."
+                },
+                "parser_type": "subparser",
+                "subparser": {
+                    "kwargs":{
+                        "dest": "subcommand",
+                        "metavar": "token_command",
+                        "required": true
+                    },
+                    "subparsers": [
+                        {
+                            "kwargs": {
+                                "name": "add",
+                                "help": "Add a new token",
+                                "description": "Add a new token"
+                            },
+                            "parser_type": "argument",
+                            "args": [
+                                {
+                                    "name": ["key"],
+                                    "kwargs": {
+                                        "help": "Key to save the token as",
+                                        "metavar": "key",
+                                        "nargs": 1
+                                    }
+                                },
+                                {
+                                    "name": ["token"],
+                                    "kwargs": {
+                                        "help": "Token to save",
+                                        "metavar": "token",
+                                        "nargs": 1
+                                    }
+                                },
+                                {
+                                    "name": ["-y", "--yes"],
+                                    "kwargs":{
+                                        "help": "Do not ask for overwrite confirmation",
+                                        "action": "store_true"
+                                    }
+                                }
+                            ]
+                        },
+                        {
+                            "kwargs": {
+                                "name": "remove",
+                                "help": "Remove a token",
+                                "description": "Remove a token"
+                            },
+                            "parser_type": "argument",
+                            "args": [
+                                {
+                                    "name": ["key"],
+                                    "kwargs": {
+                                        "help": "Key to remove",
+                                        "metavar": "key",
+                                        "nargs": 1
+                                    }
+                                }
+                            ]
+                        },
+                        {
+                            "kwargs": {
+                                "name": "list",
+                                "help": "List all tokens",
+                                "description": "List all tokens"
+                            },
+                            "parser_type": "argument",
+                            "args": [
+                                {
+                                    "name": ["-k", "--keys"],
+                                    "kwargs": {
+                                        "help": "List keys only",
+                                        "action": "store_true"
+                                    }
+                                },
+                                {
+                                    "name": ["-t", "--tokens"],
+                                    "kwargs": {
+                                        "help": "List tokens only",
+                                        "action": "store_true"
+                                    }
+                                }
+                            ]
+                        },
+                        {
+                            "kwargs": {
+                                "name": "get",
+                                "help": "Get a token",
+                                "description": "Get a token"
+                            },
+                            "parser_type": "argument",
+                            "args": [
+                                {
+                                    "name": ["key"],
+                                    "kwargs": {
+                                        "help": "Key to get",
+                                        "metavar": "key",
+                                        "nargs": 1
+                                    }
+                                }
+                            ]
+                        },
+                        {
+                            "kwargs": {
+                                "name": "clear",
+                                "help": "Clear all tokens",
+                                "description": "Clear all tokens"
+                            },
+                            "parser_type": "argument",
+                            "args": [
+                                {
+                                    "name": ["-y", "--yes"],
+                                    "kwargs": {
+                                        "help": "Do not ask for confirmation",
+                                        "action": "store_true"
+                                    }
+                                }
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "kwargs": {
+                    "name": "config",
+                    "help": "Configure settings",
+                    "description": "Configure global settings of the Lichess CLI.\nSettings are stored in lichess.conf in the Lichess home directory.\nYou can also set the path to the config file with the LICHESS_HOME environment variable."
+                },
+                "parser_type": "subparser",
+                "subparser": {
+                    "kwargs": {
+                        "dest": "subcommand",
+                        "metavar": "config_command",
+                        "required": true
+                    },
+                    "subparsers":[
+                        {
+                            "kwargs" : {
+                                "name": "set",
+                                "help": "Set a setting",
+                                "description": "Set a setting"
+                            },
+                            "parser_type": "argument",
+                            "args": [
+                                {
+                                    "name": ["key"],
+                                    "kwargs": {
+                                        "help": "Key to set",
+                                        "metavar": "key",
+                                        "nargs": 1
+                                    }
+                                },
+                                {
+                                    "name": ["value"],
+                                    "kwargs": {
+                                        "help": "Value to set",
+                                        "metavar": "value",
+                                        "nargs": "?"
+                                    }
+                                }
+                            ]
+                        },
+                        {
+                            "kwargs": {
+                                "name": "get",
+                                "help": "Get a setting",
+                                "description": "Get a setting"
+                            },
+                            "parser_type": "argument",
+                            "args": [
+                                {
+                                    "name": ["key"],
+                                    "kwargs": {
+                                        "help": "Key to get",
+                                        "metavar": "key",
+                                        "nargs": 1
+                                    }
+                                }
+                            ]
+                        }
+                    ]
+                }
+            }
+        ]
+    }
+}
