@@ -1,10 +1,26 @@
 #!/usr/bin/env python3
 
 import argparse
+from argparse import _MutuallyExclusiveGroup, Action
+from collections.abc import Iterable
 import json
 import configparser
 import os
 import importlib
+
+
+class Formatter(argparse.HelpFormatter):
+    def _format_usage(self, usage: str | None, actions: Iterable[Action], groups: Iterable[_MutuallyExclusiveGroup], prefix: str | None) -> str:
+        return super()._format_usage(usage, actions, groups, prefix='Usage: ')
+
+    def _fill_text(self, text: str, width: int, indent: str) -> str:
+        return ''.join(indent + line for line in text.splitlines(keepends=True))
+
+    def _split_lines(self, text: str, width: int) -> list[str]:
+        if '\n' in text:
+            return text.splitlines()
+        return super()._split_lines(text, width)
+
 
 home = os.getenv('LICHESS_HOME')
 if home is None:
@@ -22,7 +38,7 @@ def parse_args():
     def set_subparser(parser, parser_dict):
         subparsers = parser.add_subparsers(**parser_dict['kwargs'])
         for subparser_dict in parser_dict['subparsers']:
-            subparser = subparsers.add_parser(**subparser_dict['kwargs'])
+            subparser = subparsers.add_parser(**subparser_dict['kwargs'], formatter_class=Formatter)
             if subparser_dict['parser_type'] == 'subparser':
                 set_subparser(subparser, subparser_dict['subparser'])
             elif subparser_dict['parser_type'] == 'argument':
@@ -34,7 +50,7 @@ def parse_args():
 
     parser_dict = json.load(open(os.path.join(home, 'parser.json'), 'r'))
 
-    parser = argparse.ArgumentParser(**parser_dict['kwargs'])
+    parser = argparse.ArgumentParser(**parser_dict['kwargs'], formatter_class=Formatter)
     if parser_dict['parser_type'] == 'subparser':
         set_subparser(parser, parser_dict['subparser'])
     elif parser_dict['parser_type'] == 'argument':
