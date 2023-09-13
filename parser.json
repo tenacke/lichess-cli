@@ -1,10 +1,10 @@
 {
     "kwargs": {
         "prog": "lichess",
-        "description": "Lichess CLI",
+        "description": "Lichess CLI\nYou can run different commands to use Lichess API and configure your settings and tokens",
         "epilog": "For more information, visit https://github.com/tenacke/lichess-cli"
     },
-    "parser_type": "subparser",
+    "parser_type": "subparser", 
     "subparser": {
         "kwargs": {
             "dest": "command",
@@ -143,7 +143,7 @@
                 "kwargs": {
                     "name": "config",
                     "help": "Configure settings",
-                    "description": "Configure global settings of the Lichess CLI.\nSettings are stored in lichess.conf in the Lichess home directory.\nYou can also set the path to the config file with the LICHESS_HOME environment variable."
+                    "description": "Configure global settings of the Lichess CLI.\nSettings are stored in lichess.conf in the Lichess home directory.\nYou can also set the path to the config file with the LICHESS_HOME environment variable.\nAll possible settings:\n\taccount\n\tboard\n\tbot\n\tbot.api_key\n\tbroadcast\n\tbulk\n\tchallenge\n\texplorer\n\tgame\n\tmessaging\n\tpuzzle\n\trelations\n\tsimuls\n\tstudy\n\ttoken\n\ttoken.prefix\n\ttoken.gpgenable\n\ttoken.gpgpprogram\n\ttoken.gpgargs\n\ttoken.gpghomedir\n\ttoken.keydefault\n\ttablebase\n\tteam\n\ttournament\n\ttv\n\tuser\n\tuser.name\n\tuser.email\n\tuser.passphrase"
                 },
                 "parser_type": "subparser",
                 "subparser": {
@@ -157,14 +157,14 @@
                             "kwargs" : {
                                 "name": "set",
                                 "help": "Set a setting",
-                                "description": "Set a setting"
+                                "description": "Set a setting.\nSee lichess config --help for all settings and more information."
                             },
                             "parser_type": "argument",
                             "args": [
                                 {
                                     "name": ["key"],
                                     "kwargs": {
-                                        "help": "Key to set",
+                                        "help": "Key to set. Format: section.option",
                                         "metavar": "key",
                                         "nargs": 1
                                     }
@@ -183,14 +183,14 @@
                             "kwargs": {
                                 "name": "get",
                                 "help": "Get a setting",
-                                "description": "Get a setting"
+                                "description": "Get a setting.\nSee lichess config --help for all settings and more information."
                             },
                             "parser_type": "argument",
                             "args": [
                                 {
                                     "name": ["key"],
                                     "kwargs": {
-                                        "help": "Key to get",
+                                        "help": "Key to get. Format: section.option",
                                         "metavar": "key",
                                         "nargs": 1
                                     }
