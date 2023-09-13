@@ -42,9 +42,63 @@
                     "kwargs": {
                         "dest": "subcommand",
                         "metavar": "account_command",
-                        "required": true
+                        "required": false
                     },
                     "subparsers": [
+                        {
+                            "kwargs": {
+                                "name": "info",
+                                "help": "Get account info",
+                                "description": "Get account info"
+                            },
+                            "parser_type": "argument",
+                            "args":[]
+                        },
+                        {
+                            "kwargs": {
+                                "name": "email",
+                                "help": "Get account email",
+                                "description": "Get account email"
+                            },
+                            "parser_type": "argument",
+                            "args":[]
+                        },
+                        {
+                            "kwargs": {
+                                "name": "preferences",
+                                "help": "Get account preferences",
+                                "description": "Get account preferences"
+                            },
+                            "parser_type": "argument",
+                            "args":[]
+                        },
+                        {
+                            "kwargs": {
+                                "name": "kid_mode",
+                                "help": "Get or set kid mode",
+                                "description": "Manage kid mode status"
+                            },
+                            "parser_type": "argument",
+                            "args":[
+                                {
+                                    "name": ["mode"],
+                                    "kwargs": {
+                                        "help": "Set the mode as (empty input to get current status)",
+                                        "metavar": "mode",
+                                        "nargs": "?"
+                                    }
+                                }
+                            ]
+                        },
+                        {
+                            "kwargs": {
+                                "name": "bot_mode",
+                                "help": "Upgrade to bot account",
+                                "description": "Upgrade to bot account (Your account should be unplayed"
+                            },
+                            "parser_type": "argument",
+                            "args":[]
+                        }
                     ]
                 }
             },
