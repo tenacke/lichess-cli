@@ -14,6 +14,43 @@
         "subparsers": [
             {
                 "kwargs": {
+                    "name": "help",
+                    "help": "Show manual",
+                    "description": "Show manual for a command\nIf no command is given, show general help",
+                    "add_help": false
+                },
+                "parser_type": "argument",
+                "args": [
+                    {
+                        "name": ["subcommand"],
+                        "kwargs": {
+                            "help": "Command to show help for",
+                            "choices": ["account", "token", "config"],
+                            "metavar": "command",
+                            "nargs": "?"
+                        }
+                    }
+                ]
+            },
+            {
+                "kwargs": {
+                    "name": "account",
+                    "help": "Manage account",
+                    "description": "Manage your Lichess account"
+                },
+                "parser_type": "subparser",
+                "subparser": {
+                    "kwargs": {
+                        "dest": "subcommand",
+                        "metavar": "account_command",
+                        "required": true
+                    },
+                    "subparsers": [
+                    ]
+                }
+            },
+            {
+                "kwargs": {
                     "name": "token",
                     "help": "Manage Lichess API token",
                     "description": "Manage lichess API tokens (https://lichess.org/account/oauth/token)\nIt is possible to encrypt the token file with GPG by setting the gpg_enabled=true in config.json.\nIf the token file is encrypted, you will be asked for the passphrase when you run a command.\nYou can set the passphrase in config.json with the gpg_passphrase key or disable when creating the gpg key.\nPassphrase is stored in memory for 5 minutes."

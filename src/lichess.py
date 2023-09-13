@@ -7,6 +7,8 @@ import json
 import configparser
 import os
 import importlib
+import sys
+import subprocess
 
 
 class Formatter(argparse.HelpFormatter):
@@ -62,5 +64,13 @@ if __name__ == '__main__':
     config = parse_config()
     args = parse_args()
     command = args.command
-    module = importlib.import_module(command)
-    module.main(args, config)
+    if command == 'help':
+        subcommand = args.subcommand
+        if subcommand is None:
+            subprocess.call(['lichess', '--help'])
+        else:
+            subprocess.call(['lichess', subcommand, '--help'])
+        sys.exit(0)
+    else:
+        module = importlib.import_module(command)
+        module.main(args, config)
