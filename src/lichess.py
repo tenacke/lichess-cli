@@ -69,7 +69,7 @@ if __name__ == '__main__':
         if subcommand is None:
             subprocess.call(['lichess', '--help'])
         else:
-            subprocess.call(['lichess', subcommand, '--help'])
+            subprocess.call(['lichess'] + subcommand + ['--help'])
         sys.exit(0)
     else:
         module = importlib.import_module(command)

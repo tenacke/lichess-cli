@@ -25,9 +25,8 @@
                         "name": ["subcommand"],
                         "kwargs": {
                             "help": "Command to show help for",
-                            "choices": ["account", "token", "config"],
                             "metavar": "command",
-                            "nargs": "?"
+                            "nargs": "*"
                         }
                     }
                 ]
