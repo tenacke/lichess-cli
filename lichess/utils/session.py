@@ -2,22 +2,11 @@ from __future__ import annotations
 
 import requests
 from urllib.parse import urljoin
-from typing import (
-    Any,
-    Callable,
-    Dict,
-    Generic,
-    Iterator,
-    Literal,
-    Mapping,
-    TypeVar,
-    Union,
-    overload,
-)
+from typing import Any, Dict, Iterator
 
-from .formats import FormatHandler
-from . import noop
-from .exceptions import ApiError, ResponseError
+from utils.formats import FormatHandler, Params, Data, Converter
+from utils import noop, T
+from utils.exceptions import ApiError, ResponseError
 
 """
     This module is a copy of the utils package from the berserk library, with some modifications.
@@ -25,13 +14,6 @@ from .exceptions import ApiError, ResponseError
     The original code is available here:
         https://github.com/lichess-org/berserk/blob/master/berserk/session.py
 """
-
-T = TypeVar("T")
-U = TypeVar("U")
-
-Params = Mapping[str, Union[int, bool, str, None]]
-Data = Union[str, Params]
-Converter = Callable[[T], T]
 
 class Requestor:
     def __init__(

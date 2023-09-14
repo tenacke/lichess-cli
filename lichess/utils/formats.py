@@ -1,13 +1,15 @@
 from __future__ import annotations
 import json
-from typing import Any, Callable, Dict, Generic, Iterator, List, Type, TypeVar, cast
+from typing import Any, Callable, Dict, Generic, Iterator, Mapping, List, Type, TypeVar, Union, cast
 
 import ndjson  # type: ignore
 from requests import Response
 
-from . import utils
+from utils import noop, T
 
-T = TypeVar("T")
+Params = Mapping[str, Union[int, bool, str, None]]
+Data = Union[str, Params]
+Converter = Callable[[T], T]
 
 """
     This module is a copy of the berserk module from the berserk library, to avoid having to install it.
@@ -33,7 +35,7 @@ class FormatHandler(Generic[T]):
         self,
         response: Response,
         is_stream: bool,
-        converter: Callable[[T], T] = utils.noop,
+        converter: Callable[[T], T] = noop,
     ) -> T | Iterator[T]:
         """Handle the response by returning the data.
 

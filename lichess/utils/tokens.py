@@ -6,6 +6,12 @@ import sys
 import tempfile
 import subprocess
 
+from typing import Dict, Set
+from configparser import RawConfigParser
+from argparse import Namespace
+
+from utils.exceptions import CLIError
+
 _settings = None
 _VERBOSE = None
 
@@ -14,10 +20,9 @@ def print_verbose(*args):
         print(*args)
 
 
-def read_json():
+def read_json() -> Dict:
     if _settings is None:
-        print_verbose('Settings not configured')
-        sys.exit(1)
+        raise CLIError('Settings not configured')
 
     gpg_enabled = _settings.getboolean('token', 'gpgenable')
     gpg_program = _settings.get('token', 'gpgprogram')
@@ -39,21 +44,18 @@ def read_json():
             data = subprocess.check_output(args)
             return json.loads(data)
         except subprocess.CalledProcessError:
-            print_verbose('Error reading token file')
-            sys.exit(1)
+            raise CLIError('Error reading token file')
     else:
         try:
             with open(token_file, 'r') as f:
                 return json.load(f)
         except IOError:
-            print_verbose('Error reading token file')
-            sys.exit(1)
+            raise CLIError('Error reading token file')
 
 
-def write_json(data):
+def write_json(data: Dict) -> None:
     if _settings is None:
-        print_verbose('Settings not configured')
-        sys.exit(1)
+        raise CLIError('Settings not configured')
 
     gpg_enabled = _settings.getboolean('token', 'gpgenable')
     gpg_program = _settings.get('token', 'gpgprogram')
@@ -79,8 +81,7 @@ def write_json(data):
 
             return_code = subprocess.call(args)
             if return_code != 0:
-                print_verbose('Error writing token file')
-                sys.exit(1)
+                raise CLIError('Error writing token file')
 
             if save_default:
                 subprocess.call(['lichess', 'config', 'set', 'user.email', gpg_user])
@@ -89,39 +90,37 @@ def write_json(data):
             with open(token_file, 'w') as f:
                 json.dump(data, f)
         except IOError:
-            print_verbose('Error writing token file')
-            sys.exit(1)
+            raise CLIError('Error writing token file')
 
 
-def add_token(key, token, yes=False):
+def add_token(key: str, token: str, yes: bool = False) -> None:
     data = read_json()
     if key in data:
         if not yes and input(f'Key {key} already exists\nDo you want to overwrite? [y/N] ').lower() != 'y':
-            sys.exit(1)
+            return
     data[key] = token
     write_json(data)
     print_verbose(f'Key {key} added')
 
 
-def get_token(key):
+def get_token(key: str) -> str:
     data = read_json()
     if key not in data:
-        print_verbose(f'Key {key} not found')
-        sys.exit(1)
+        raise CLIError(f'Key {key} not found')
     return data[key]
 
 
-def remove_token(key):
+def remove_token(key: str) -> None:
     data = read_json()
     if key not in data:
-        print_verbose(f'Key {key} not found')
-        sys.exit(1)
+        raise CLIError(f'Key {key} not found')
+    
     del data[key]
     print_verbose(f'Key {key} deleted safely')
     write_json(data)
 
 
-def list_tokens(keys=False, tokens=False):
+def list_tokens(keys: bool = False, tokens: bool = False) -> Dict | Set:
     data = read_json()
     if (keys and tokens):
         return data
@@ -133,14 +132,14 @@ def list_tokens(keys=False, tokens=False):
         return data
 
 
-def clear_tokens(yes=False):
+def clear_tokens(yes: bool = False) -> None:
     if not yes and input('Do you want to clear all tokens? [y/N] ').lower() != 'y':
-        sys.exit(1)
+        return
     write_json({})
     print_verbose('Tokens cleared')
 
 
-def configure(config, verbose=True):
+def configure(config: RawConfigParser, verbose: bool = True) -> None:
     global _settings
     global _VERBOSE
 
@@ -159,7 +158,7 @@ def configure(config, verbose=True):
         _settings.set('runtime', 'token_file', os.path.join(home, token_prefix + '.json'))
 
 
-def main(args, config):
+def main(args: Namespace, config: RawConfigParser) -> None:
     configure(config)
 
     subcommand = args.subcommand
