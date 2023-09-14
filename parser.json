@@ -52,7 +52,16 @@
                                 "description": "Get account info"
                             },
                             "parser_type": "argument",
-                            "args":[]
+                            "args": [
+                                {
+                                    "name": ["-k", "--key"],
+                                    "kwargs": {
+                                        "help": "Optional token key to override the default token",
+                                        "metavar": "key",
+                                        "nargs": 1
+                                    }
+                                }
+                            ]
                         },
                         {
                             "kwargs": {
@@ -61,7 +70,16 @@
                                 "description": "Get account email"
                             },
                             "parser_type": "argument",
-                            "args":[]
+                            "args": [
+                                {
+                                    "name": ["-k", "--key"],
+                                    "kwargs": {
+                                        "help": "Optional token key to override the default token",
+                                        "metavar": "key",
+                                        "nargs": 1
+                                    }
+                                }
+                            ]
                         },
                         {
                             "kwargs": {
@@ -70,16 +88,25 @@
                                 "description": "Get account preferences"
                             },
                             "parser_type": "argument",
-                            "args":[]
+                            "args": [
+                                {
+                                    "name": ["-k", "--key"],
+                                    "kwargs": {
+                                        "help": "Optional token key to override the default token",
+                                        "metavar": "key",
+                                        "nargs": 1
+                                    }
+                                }
+                            ]
                         },
                         {
                             "kwargs": {
-                                "name": "kid_mode",
+                                "name": "kid",
                                 "help": "Get or set kid mode",
                                 "description": "Manage kid mode status"
                             },
                             "parser_type": "argument",
-                            "args":[
+                            "args": [
                                 {
                                     "name": ["mode"],
                                     "kwargs": {
@@ -87,17 +114,34 @@
                                         "metavar": "mode",
                                         "nargs": "?"
                                     }
+                                },
+                                {
+                                    "name": ["-k", "--key"],
+                                    "kwargs": {
+                                        "help": "Optional token key to override the default token",
+                                        "metavar": "key",
+                                        "nargs": 1
+                                    }
                                 }
                             ]
                         },
                         {
                             "kwargs": {
-                                "name": "bot_mode",
+                                "name": "bot",
                                 "help": "Upgrade to bot account",
                                 "description": "Upgrade to bot account (Your account should be unplayed"
                             },
                             "parser_type": "argument",
-                            "args":[]
+                            "args": [
+                                {
+                                    "name": ["-k", "--key"],
+                                    "kwargs": {
+                                        "help": "Optional token key to override the default token",
+                                        "metavar": "key",
+                                        "nargs": 1
+                                    }
+                                }
+                            ]
                         }
                     ]
                 }
