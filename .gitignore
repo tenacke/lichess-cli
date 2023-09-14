@@ -164,4 +164,5 @@ cython_debug/
 lichess.conf
 
 # user data
-tokens.*
+tokens.gpg
+tokens.json
