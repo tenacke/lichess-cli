@@ -1,7 +1,4 @@
-import berserk
-import os
-import sys
-import subprocess 
+from __future__ import annotations
 
 
 def info():
@@ -24,6 +21,4 @@ def bot():
     pass
 
 def main(args, config):
-    token_key = config.get('token', 'key')
-    token = subprocess.check_output(['lichess', 'token', 'get', token_key]).decode('utf-8').strip()
-    print(token)
+    pass

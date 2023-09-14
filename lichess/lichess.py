@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 
+from __future__ import annotations
+
 import argparse
 from argparse import _MutuallyExclusiveGroup, Action
 from collections.abc import Iterable
