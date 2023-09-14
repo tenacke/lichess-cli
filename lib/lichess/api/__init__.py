@@ -15,7 +15,7 @@ class APIClient(BaseClient):
         if token_key is None:
             token_key = config.get('token', 'key')
             if token_key == '':
-                raise CLIError("No token key provided. See 'lichess token --help' for more information.")
+                raise CLIError(NameError("No token key provided. See 'lichess token --help' for more information."))
         
         tokens.configure(config)
         self.token = tokens.get_token(token_key)

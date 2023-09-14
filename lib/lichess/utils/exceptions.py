@@ -34,6 +34,12 @@ class CLIError(LichessError):
         self.__cause__ = self.error = error
 
 
+class CorruptedSourceError(LichessError):
+    def __init__(self, error: Exception):
+        super().__init__(get_message(error))
+        self.__cause__ = self.error = error
+
+
 class ApiError(LichessError):
     def __init__(self, error: Exception):
         super().__init__(get_message(error))

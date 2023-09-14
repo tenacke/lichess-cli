@@ -2,19 +2,19 @@
 
 from __future__ import annotations
 
-import argparse
-from argparse import _MutuallyExclusiveGroup, Action
+from argparse import _MutuallyExclusiveGroup, Action, ArgumentParser, HelpFormatter
 from collections.abc import Iterable
+from configparser import ConfigParser, ParsingError
+from importlib import import_module
 import json
-import configparser
 import os
-import importlib
 import sys
 import subprocess
-
 from gettext import gettext as _
 
-class BaseFormatter(argparse.HelpFormatter):
+from utils.exceptions import LichessError, CorruptedSourceError
+
+class BaseFormatter(HelpFormatter):
     def _format_usage(self, usage: str | None, actions: Iterable[Action], groups: Iterable[_MutuallyExclusiveGroup], prefix: str | None) -> str:
         if prefix is None:
             prefix = _('Usage: ')
@@ -45,10 +45,24 @@ if home is None:
 
 
 def parse_config():
-    config = configparser.ConfigParser(inline_comment_prefixes=('#', ';'))
-    config.read(os.path.join(home, 'defaults.conf'))
-    config.read(os.path.join(home, 'lichess.conf'))
-    # TODO handle corrupted config
+    config = ConfigParser(inline_comment_prefixes=('#', ';'))
+    conf_dir = os.path.join(home, 'var')
+    
+    if not os.path.exists(conf_dir):
+        raise CorruptedSourceError(NotADirectoryError(f'Configuration directory {conf_dir} does not exist!\nTry checking LICHESS_HOME environment variable or reinstalling the program'))
+    
+    try:
+        if os.path.isfile(os.path.join(conf_dir, 'defaults.conf')):
+            config.read(os.path.join(conf_dir, 'defaults.conf'))
+        else:
+            raise CorruptedSourceError(FileNotFoundError(f'Default configuration file {os.path.join(conf_dir, "defaults")} does not exist!\nTry checking LICHESS_HOME environment variable or reinstalling the program'))
+        
+        if os.path.isfile(os.path.join(conf_dir, 'lichess.conf')):
+            config.read(os.path.join(conf_dir, 'lichess.conf'))
+    except ParsingError as e:
+        e.message = f'Error parsing configuration file {e.source}:\n{e.message}'
+        raise CorruptedSourceError(e)
+
     return config
 
 def parse_args():
@@ -68,7 +82,7 @@ def parse_args():
     parser_dict = json.load(open(os.path.join(home, 'parser.json'), 'r'))
     # TODO handle corrupted config
 
-    parser = argparse.ArgumentParser(**parser_dict['kwargs'], formatter_class=BaseFormatter)
+    parser = ArgumentParser(**parser_dict['kwargs'], formatter_class=BaseFormatter)
     if parser_dict['parser_type'] == 'subparser':
         set_subparser(parser, parser_dict['subparser'])
     elif parser_dict['parser_type'] == 'argument':
@@ -100,5 +114,9 @@ if __name__ == '__main__':
         
         package = find_package(command)
         # TODO handle corrupted source
-        module = importlib.import_module(f'.{command}', package=package)
-        module.main(args, config)
+        try:
+            module = import_module(f'.{command}', package=package)
+            module.main(args, config)
+        except LichessError as e:
+            print(__file__, 'error:', e)
+            sys.exit(1)
