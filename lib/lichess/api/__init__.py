@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from utils.client import BaseClient
+from utils.requests import RequestClient
 from utils.session import Session
 from utils.exceptions import CLIError
 from utils import tokens
@@ -10,8 +10,9 @@ from configparser import RawConfigParser
 
 API_URL = "https://lichess.org"
 
-class APIClient(BaseClient):
-    def __init__(self, config:RawConfigParser, base_url: str | None = None, token_key: str | None = None):
+class APIClient(RequestClient):
+    def __init__(self, base_url: str | None = None, token_key: str | None = None):
+        super().super().__init__(base_url=base_url or API_URL)
         if token_key is None:
             token_key = config.get('token', 'key')
             if token_key == '':
