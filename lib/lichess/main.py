@@ -13,7 +13,7 @@ import subprocess
 from gettext import gettext as _
 
 from utils.exceptions import LichessError, CorruptedSourceError
-from . import HOME
+from ..lichess.__init__ import HOME
 
 class BaseFormatter(HelpFormatter):
     def _format_usage(self, usage: str | None, actions: Iterable[Action], groups: Iterable[_MutuallyExclusiveGroup], prefix: str | None) -> str:

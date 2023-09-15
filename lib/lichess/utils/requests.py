@@ -5,12 +5,14 @@ from utils import noop
 
 from .session import Session, Requestor
 from .formats import JSON, Params, Data, FormatHandler, Converter
+from lichess import BaseClient
 
 
-# Client API for lichess package
+# Requests Client API for lichess package
 
-class BaseClient:
-    def __init__(self, session: Session, base_url: str):
+class RequestClient(BaseClient):
+    def __init__(self,  base_url: str, session: Session | None = None):
+        super().__init__()
         self._r = Requestor(session, base_url, default_fmt=JSON)
 
     
