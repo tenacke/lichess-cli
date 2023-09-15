@@ -6,45 +6,32 @@ import os
 import sys
 import subprocess
 sys.path.append(os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
+sys.path.append(os.path.dirname(os.path.realpath(__file__)))
+print(sys.path)
 
-from argparse import Namespace
-from configparser import ConfigParser
-from importlib import import_module
-from gettext import gettext as _
+from typing import Any, Dict
 
-from utils.exceptions import LichessError, CorruptedSourceError
+from .exceptions import LichessError, CorruptedSourceError
 from lichess import BaseClient
 from utils.tokens import Token
-from utils.config import Config
-from api.account import Account
 
 
-class LichessClient:
-    @property
-    def token(self) -> Token:
-        return Token()
-    
-    @property
-    def config(self) -> Config:
-        return Config()
-    
-    @property
-    def account(self) -> Account:
-        return Account()
+class LichessClient(BaseClient):
+    def init(self, *args: Any, **kwargs: Dict[str, Any]) -> None:
+        client = BaseClient(*args, **kwargs)
+        self.set_credentials(*client.get_credentials())
 
-    @staticmethod
     def get_command(self) -> str:
         return self.get_argument('command')
     
-    @staticmethod
-    def get_subcommand(self) -> str | None:
+    def get_subcommand(self) -> list[str] | None:
         return self.get_argument('subcommand')
-    
 
 
 def main():
-    client = BaseClient()
-
+    client = LichessClient()
+    token = Token()
+    print(token.list())
     try:
         command = client.get_command()
         if command == 'help':
@@ -67,9 +54,7 @@ def main():
             package = find_package(command)
             if package is None:
                 raise CorruptedSourceError(FileNotFoundError(f'Module {command}.py not found!\nTry checking LICHESS_HOME environment variable or reinstalling the program'))
-        
-            module = import_module(f'.{command}', package=package)
-            module.main(client.get_args(), client.get_config())
+
     except LichessError:
         info = sys.exc_info()
         type = info[0].__name__
