@@ -15,7 +15,7 @@ class LichessClient(BaseClient):
     _instance: LichessClient | None = None
 
     def init(self, *args: Any, **kwargs: Dict[str, Any]) -> None:
-        self.verbose = kwargs.get('verbose', False)
+        self.verbose = kwargs.get('verbose', True)
 
     def config(self) -> Config:
         return Config(self.verbose)
