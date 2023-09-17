@@ -4,8 +4,8 @@ from argparse import Namespace
 from configparser import RawConfigParser
 from typing import Any, Dict, Iterator
 
-from lichess import convert_to_boolean
-from lichess import BaseClient
+from lichess.utils import convert_to_boolean
+from lichess.base import BaseClient
 from .client import QueryClient
 
 BASE_URL = None

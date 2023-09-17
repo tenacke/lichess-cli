@@ -5,8 +5,8 @@ from urllib.parse import urljoin
 from typing import Any, Dict, Iterator, TypeVar
 
 from .formats import BaseResponseFormatHandler, Params, Data, Converter
-from lichess import noop
-from lichess import ApiError, ResponseError
+from lichess.utils import noop
+from lichess.exceptions import ApiError, ResponseError
 
 """
     This module is a copy of the utils package from the berserk library, with some modifications.

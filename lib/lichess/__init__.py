@@ -4,6 +4,7 @@ from .base import BaseClient
 from .args import Args
 from .config import Config
 from .tokens import Token
+from .client import LichessClient
 from .exceptions import LichessError
 from .exceptions import ApiError
 from .exceptions import ResponseError
@@ -22,6 +23,7 @@ __all__ = [
     'Args',
     'Config',
     'Token',
+    'LichessClient',
     'LichessError',
     'ApiError',
     'ResponseError',
