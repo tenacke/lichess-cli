@@ -73,11 +73,13 @@ class Config(BaseClient):
     def get(self, key: str) -> str:
         # For cli get subcommand
         section, option = self.check_valid_key(key)
-        return self.get_option(section, option)
+        self.io.print(f'{key}: {self.get_option(section, option)}')
     
     def set(self, key: str, value: str) -> None:
         # For cli set subcommand
         section, option = self.check_valid_key(key)
+        if self.has_option(section, option):
+            temp = self.get_option(section, option)
         self.set_option(section, option, value)
 
         if not self.temp_config.has_section(section):
@@ -87,8 +89,11 @@ class Config(BaseClient):
         try:
             with open(CONFIG_FILE, 'w') as f:
                 self.temp_config.write(f)
+            self.io.print(f'Setting {key} successfully set to {value}')
         except OSError as e:
-            raise CorruptedSourceError(e)
+            self.set_option(section, option, temp)
+            self.io.print(f'Error setting {key}')
+            raise UserError(e)
 
     def check_valid_key(self, key):
         if key.count('.') != 1:

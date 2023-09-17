@@ -23,6 +23,7 @@ class Token(BaseClient):
         self.handler = self.get_handler(gpg_enabled)
 
         self.data = self.handler.read()
+        self.temp = None
 
     def new(self, verbose: bool = True) -> None:
         self.io = IOHandler(verbose)
@@ -32,41 +33,79 @@ class Token(BaseClient):
             return GPGHandler()
         else:
             return JSONHandler()
+        
+    def add_token(self, key: str, token: str) -> None:
+        if key in self.data:
+            self.temp = self.data[key]
+        self.data[key] = token
+        self.handler.write(self.data)
+
+    def remove_token(self, key: str) -> None:
+        if key not in self.data:
+            raise KeyError(f'Key {key} not found')
+        self.temp = self.data[key]
+        del self.data[key]
+        self.handler.write(self.data)
+
+    def get_token(self, key: str) -> str:
+        if key not in self.data:
+            raise KeyError(f'Key {key} not found')
+        return self.data[key]
+    
+    def get_tokens(self) -> Dict:
+        return self.data
+    
+    def clear_tokens(self) -> None:
+        self.handler.write({})
+        self.data = {}
 
     def add(self, key: str, token: str, yes: bool = False) -> None:
         if key in self.data:
             if not yes and self.io.input(f'Key {key} already exists\nDo you want to overwrite? [y/N] ').lower() != 'y':
                 return
-        self.data[key] = token
-        self.handler.write(self.data)
+        try:
+            self.add_token(key, token)
+        except CLIError as e:
+            self.data[key] = self.temp
+            self.temp = None
+            self.io.print(f'Error adding key {key}')
+            raise UserError(e)
         self.io.print(f'Key {key} added')
 
     def remove(self, key: str) -> None:
         if key not in self.data:
             raise UserError(KeyError(f'Key {key} not found'))
-    
-        del self.data[key]
+        try:
+            self.remove_token(key)
+        except CLIError as e:
+            self.data[key] = self.temp
+            self.temp = None
+            self.io.print(f'Error removing key {key}')
+            raise UserError(e)
         self.io.print(f'Key {key} deleted safely')
-        self.handler.write(self.data)
 
     def get(self, key: str) -> str:
         if key not in self.data:
             raise UserError(KeyError(f'Key {key} not found'))
-        return self.data[key]
+        self.io.print(self.data[key])
 
     def list(self, keys: bool = False, tokens: bool = False) -> Dict | Set:
         if (keys and tokens):
-            return self.data
+            self.io.print(f'{key}: {token}\n' for key, token in self.data.items())
         elif keys:
-            return self.data.keys()
+            self.io.print(*self.data.keys(), sep='\n')
         elif tokens:
-            return self.data.values()
+            self.io.print(*self.data.values(), sep='\n')
         else:
-            return self.data
+            self.io.print(f'{key}: {token}\n' for key, token in self.data.items())
 
     def clear(self, yes: bool = False) -> None:
         if yes or self.io.input('Do you want to clear all tokens? [y/N] ').lower() == 'y':
-            self.handler.write({})
+            try:
+                self.clear_tokens()
+            except CLIError as e:
+                self.io.print('Error clearing tokens')
+                raise UserError(e)
             self.io.print('Tokens cleared')
 
 

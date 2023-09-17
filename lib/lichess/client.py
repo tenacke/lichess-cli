@@ -76,4 +76,3 @@ class LichessClient(BaseClient):
     
     def user(self) -> User:
         return User(self.verbose)
- 
