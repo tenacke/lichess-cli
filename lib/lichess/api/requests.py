@@ -4,8 +4,8 @@ from typing import Any, Dict, Iterator
 
 from .session import Session, Requestor
 from .formats import JSON, Params, Data, BaseResponseFormatHandler, Converter
-from lichess import BaseClient
-from lichess import noop
+from lichess.base import BaseClient
+from lichess.utils import noop
 
 # Requests Client API for lichess package
 

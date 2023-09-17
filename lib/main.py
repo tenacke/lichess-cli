@@ -2,20 +2,14 @@
 
 from __future__ import annotations
 
-import os
 import sys
-import subprocess
-sys.path.append(os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
 
-from typing import Any, Dict
-
-from lichess.exceptions import LichessError, CorruptedSourceError
-from lichess.tokens import Token
+from lichess.args import Args
+from lichess.config import Config
+from lichess.commands import LichessClient
+from lichess.exceptions import LichessError
 
 def main():
-    client = None
-    token = Token()
-    print(token.get('test'))
     """try:
         command = client.get_command()
         if command == 'help':
@@ -47,4 +41,14 @@ def main():
         sys.exit(1)"""
 
 if __name__ == '__main__':
-    main()
+    try:
+        args = Args()
+        config = Config()
+    except LichessError:
+        info = sys.exc_info()
+        type = info[0].__name__
+        message = info[1]
+        print(__file__, type, message, sep=': ', file=sys.stderr)
+        sys.exit(1)
+
+

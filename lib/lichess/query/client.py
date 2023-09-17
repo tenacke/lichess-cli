@@ -1,10 +1,10 @@
 from __future__ import annotations
 
-from lichess.api import RequestClient
-from lichess.api import Session
-from lichess.api import Token
-from lichess import BaseClient
-from lichess import CLIError
+from lichess.api.requests import RequestClient
+from lichess.api.session import Session
+from lichess.tokens import Token
+from lichess.base import BaseClient
+from lichess.exceptions import CLIError
 
 API_URL = "https://lichess.org"
 
