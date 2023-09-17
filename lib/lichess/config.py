@@ -71,12 +71,13 @@ class Config(BaseClient):
         return self.config.get(section, option)
     
     def get(self, key: str) -> str:
-        # For cli get subcommand
+        key = key[0]
         section, option = self.check_valid_key(key)
         self.io.print(f'{key}: {self.get_option(section, option)}')
     
     def set(self, key: str, value: str) -> None:
-        # For cli set subcommand
+        key = key[0]
+
         section, option = self.check_valid_key(key)
         if self.has_option(section, option):
             temp = self.get_option(section, option)
@@ -97,7 +98,7 @@ class Config(BaseClient):
 
     def check_valid_key(self, key):
         if key.count('.') != 1:
-            raise UserError(ValueError('Invalid key! You should use the format section.option'))
+            raise UserError(ValueError('Invalid format. You should use the format section.option'))
             
         section, option = key.split('.')
         if not self.config.has_section(section):
