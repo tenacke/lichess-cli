@@ -1,20 +1,27 @@
 from __future__ import annotations
 
+
 import os
 import json
-from typing import TypeVar, Any, Dict, Iterable
-from argparse import HelpFormatter, Action, _MutuallyExclusiveGroup, ArgumentParser, Namespace
 from configparser import RawConfigParser, ConfigParser, ParsingError
+from argparse import HelpFormatter, Action, _MutuallyExclusiveGroup, ArgumentParser, Namespace
+from typing import Any, Dict, Iterable, TypeVar
 from gettext import gettext as _
 
-from utils.exceptions import CorruptedSourceError, LichessError
-from lichess import ETC
+from .exceptions import LichessError, CorruptedSourceError
 
 T = TypeVar('T')
-U = TypeVar('U')
 
 BOOLEAN_STATES = {'1': True, 'yes': True, 'true': True, 'on': True,
                     '0': False, 'no': False, 'false': False, 'off': False}
+
+DEFAULT_HOME = os.path.expanduser('~/.lichess')
+
+HOME = os.getenv('LICHESS_HOME')
+if HOME is None:
+    HOME = DEFAULT_HOME
+ETC = os.path.join(HOME, 'etc')
+MAN = os.path.join(HOME, 'share', 'mann')
 
 def noop(arg: T) -> T:
     return arg
@@ -51,7 +58,7 @@ def parse_args() -> Namespace:
     def set_subparser(parser: Any, parser_dict: Dict[str, Any]) -> None:
         subparsers = parser.add_subparsers(**parser_dict['kwargs'])
         for subparser_dict in parser_dict['subparsers']:
-            subparser = subparsers.add_parser(**subparser_dict['kwargs'], formatter_class=SubcommandFormatter)
+            subparser = subparsers.add_parser(**subparser_dict['kwargs'], formatter_class=SubCommandFormatter)
             if subparser_dict['parser_type'] == 'subparser':
                 set_subparser(subparser, subparser_dict['subparser'])
             elif subparser_dict['parser_type'] == 'argument':
@@ -73,13 +80,14 @@ def parse_args() -> Namespace:
     except json.JSONDecodeError as e:
         raise CorruptedSourceError(e)
 
-    parser = ArgumentParser(**parser_dict['kwargs'], formatter_class=MainFormatter)
+    parser = ArgumentParser(**parser_dict['kwargs'], formatter_class=MainCommandFormatter)
     if parser_dict['parser_type'] == 'subparser':
         set_subparser(parser, parser_dict['subparser'])
     elif parser_dict['parser_type'] == 'argument':
         set_argument(parser, parser_dict)
 
     return parser.parse_args()
+
 
 class Singleton:
     _instance = None
@@ -102,30 +110,6 @@ class Singleton:
         pass
 
 
-class BaseFormatter(HelpFormatter):
-    def _format_usage(self, usage: str | None, actions: Iterable[Action], groups: Iterable[_MutuallyExclusiveGroup], prefix: str | None) -> str:
-        if prefix is None:
-            prefix = _('Usage: ')
-        return super()._format_usage(usage, actions, groups, prefix)
-    
-
-    def _fill_text(self, text: str, width: int, indent: str) -> str:
-        return ''.join(indent + line for line in text.splitlines(keepends=True))
-
-    def _split_lines(self, text: str, width: int) -> list[str]:
-        if '\n' in text:
-            return text.splitlines()
-        return super()._split_lines(text, width)
-    
-
-class MainFormatter(BaseFormatter):
-    pass
-
-
-class SubcommandFormatter(BaseFormatter):
-    pass
-
-
 class IOHandler(Singleton):
     def init(self, *args: Any, **kwargs: Dict[str, Any]) -> None:
         self.verbose = True # default value
@@ -143,6 +127,35 @@ class IOHandler(Singleton):
             return input(*args, **kwargs)
         else:
             return LichessError(PermissionError(_('Input is not allowed in non-interactive mode')))
+        
+    def confirm(self, *args: Any, **kwargs: Dict[str, Any]) -> bool:
+        if self.verbose:
+            return input(*args, **kwargs).lower() == 'y'
+        else:
+            return LichessError(PermissionError(_('Input is not allowed in non-interactive mode')))
 
+
+class BaseCommandFormatter(HelpFormatter):
+    def _format_usage(self, usage: str | None, actions: Iterable[Action], groups: Iterable[_MutuallyExclusiveGroup], prefix: str | None) -> str:
+        if prefix is None:
+            prefix = _('Usage: ')
+        return super()._format_usage(usage, actions, groups, prefix)
+    
+
+    def _fill_text(self, text: str, width: int, indent: str) -> str:
+        return ''.join(indent + line for line in text.splitlines(keepends=True))
+
+    def _split_lines(self, text: str, width: int) -> list[str]:
+        if '\n' in text:
+            return text.splitlines()
+        return super()._split_lines(text, width)
+    
+
+class MainCommandFormatter(BaseCommandFormatter):
+    pass
+
+
+class SubCommandFormatter(BaseCommandFormatter):
+    pass
 
 

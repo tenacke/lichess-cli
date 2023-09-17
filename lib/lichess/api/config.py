@@ -8,6 +8,9 @@ import subprocess
 
 settings = None
 
+class Config:
+    pass
+
 def check_valid_key(key):
     if '.' not in key:
         print('Invalid key\nYou should use the format section.option')

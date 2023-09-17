@@ -6,32 +6,16 @@ import os
 import sys
 import subprocess
 sys.path.append(os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
-sys.path.append(os.path.dirname(os.path.realpath(__file__)))
-print(sys.path)
 
 from typing import Any, Dict
 
-from .exceptions import LichessError, CorruptedSourceError
-from lichess import BaseClient
-from utils.tokens import Token
-
-
-class LichessClient(BaseClient):
-    def init(self, *args: Any, **kwargs: Dict[str, Any]) -> None:
-        client = BaseClient(*args, **kwargs)
-        self.set_credentials(*client.get_credentials())
-
-    def get_command(self) -> str:
-        return self.get_argument('command')
-    
-    def get_subcommand(self) -> list[str] | None:
-        return self.get_argument('subcommand')
-
+from lichess.exceptions import LichessError, CorruptedSourceError
+from api import Token
 
 def main():
-    client = LichessClient()
+    client = None
     token = Token()
-    print(token.list())
+    print(token.get('test'))
     try:
         command = client.get_command()
         if command == 'help':

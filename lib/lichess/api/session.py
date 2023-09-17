@@ -2,11 +2,11 @@ from __future__ import annotations
 
 import requests
 from urllib.parse import urljoin
-from typing import Any, Dict, Iterator
+from typing import Any, Dict, Iterator, TypeVar
 
-from utils.formats import FormatHandler, Params, Data, Converter
-from utils import noop, T
-from utils.exceptions import ApiError, ResponseError
+from .formats import BaseResponseFormatHandler, Params, Data, Converter
+from lichess import noop
+from lichess import ApiError, ResponseError
 
 """
     This module is a copy of the utils package from the berserk library, with some modifications.
@@ -15,9 +15,12 @@ from utils.exceptions import ApiError, ResponseError
         https://github.com/lichess-org/berserk/blob/master/berserk/session.py
 """
 
+T = TypeVar("T")
+
+
 class Requestor:
     def __init__(
-        self, session: requests.Session, base_url: str, default_fmt: FormatHandler[T]
+        self, session: requests.Session, base_url: str, default_fmt: BaseResponseFormatHandler[T]
     ):
         self.session = session
         self.base_url = base_url
@@ -32,7 +35,7 @@ class Requestor:
         params: Params | None = None,
         data: Data | None = None,
         json: Dict[str, Any] | None = None,
-        fmt: FormatHandler[Any] | None = None,
+        fmt: BaseResponseFormatHandler[Any] | None = None,
         converter: Converter[Any] = noop,
         **kwargs: Any,
     ) -> Any | Iterator[Any]:

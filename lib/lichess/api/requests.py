@@ -1,18 +1,18 @@
 from __future__ import annotations
 
 from typing import Any, Dict, Iterator
-from utils import noop
 
 from .session import Session, Requestor
-from .formats import JSON, Params, Data, FormatHandler, Converter
+from .formats import JSON, Params, Data, BaseResponseFormatHandler, Converter
 from lichess import BaseClient
-
+from lichess import noop
 
 # Requests Client API for lichess package
 
 class RequestClient(BaseClient):
-    def __init__(self,  base_url: str, session: Session | None = None):
-        super().__init__()
+    _instance: RequestClient | None = None
+
+    def init(self,  base_url: str, session: Session | None = None):
         self._r = Requestor(session, base_url, default_fmt=JSON)
 
     
@@ -23,7 +23,7 @@ class RequestClient(BaseClient):
             params: Params | None = None,
             data: Data | None = None,
             json: Dict[str, Any] | None = None,
-            fmt: FormatHandler[Any] | None = None,
+            fmt: BaseResponseFormatHandler[Any] | None = None,
             converter: Converter[Any] = noop,
             **kwargs: Any) -> Any | Iterator[Any]:
         return self._r.request("GET",
@@ -44,7 +44,7 @@ class RequestClient(BaseClient):
             params: Params | None = None,
             data: Data | None = None,
             json: Dict[str, Any] | None = None,
-            fmt: FormatHandler[Any] | None = None,
+            fmt: BaseResponseFormatHandler[Any] | None = None,
             converter: Converter[Any] = noop,
             **kwargs: Any) -> Any | Iterator[Any]:
         return self._r.request("POST",
