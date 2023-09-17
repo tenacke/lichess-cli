@@ -2,13 +2,11 @@ from __future__ import annotations
 
 
 import os
-import json
-from configparser import RawConfigParser, ConfigParser, ParsingError
-from argparse import HelpFormatter, Action, _MutuallyExclusiveGroup, ArgumentParser, Namespace
+from argparse import HelpFormatter, Action, _MutuallyExclusiveGroup
 from typing import Any, Dict, Iterable, TypeVar
 from gettext import gettext as _
 
-from .exceptions import LichessError, CorruptedSourceError
+from .exceptions import LichessError
 
 T = TypeVar('T')
 
@@ -23,6 +21,7 @@ if HOME is None:
 ETC = os.path.join(HOME, 'etc')
 MAN = os.path.join(HOME, 'share', 'mann')
 
+
 def noop(arg: T) -> T:
     return arg
 
@@ -32,61 +31,6 @@ def convert_to_boolean( value):
         if value.lower() not in BOOLEAN_STATES:
             raise ValueError('Not a boolean: %s' % value)
         return BOOLEAN_STATES[value.lower()]
-
-
-def parse_config() -> RawConfigParser:
-    config = ConfigParser(inline_comment_prefixes=('#', ';'))
-    
-    if not os.path.exists(ETC):
-        raise CorruptedSourceError(NotADirectoryError(f'Configuration directory {ETC} does not exist!\nTry checking LICHESS_HOME environment variable or reinstalling the program'))
-    
-    try:
-        if os.path.isfile(os.path.join(ETC, 'defaults.conf')):
-            config.read(os.path.join(ETC, 'defaults.conf'))
-        else:
-            raise CorruptedSourceError(FileNotFoundError(f'Default configuration file {os.path.join(ETC, "defaults.conf")} does not exist!\nTry checking LICHESS_HOME environment variable or reinstalling the program'))
-        
-        if os.path.isfile(os.path.join(ETC, 'lichess.conf')):
-            config.read(os.path.join(ETC, 'lichess.conf'))
-    except ParsingError as e:
-        e.message = f'Error parsing configuration file {e.source}:\n{e.message}'
-        raise CorruptedSourceError(e)
-
-    return config
-
-def parse_args() -> Namespace:
-    def set_subparser(parser: Any, parser_dict: Dict[str, Any]) -> None:
-        subparsers = parser.add_subparsers(**parser_dict['kwargs'])
-        for subparser_dict in parser_dict['subparsers']:
-            subparser = subparsers.add_parser(**subparser_dict['kwargs'], formatter_class=SubCommandFormatter)
-            if subparser_dict['parser_type'] == 'subparser':
-                set_subparser(subparser, subparser_dict['subparser'])
-            elif subparser_dict['parser_type'] == 'argument':
-                set_argument(subparser, subparser_dict['args'])
-    
-    def set_argument(parser: Any, arguments: Dict[str, Any]) -> None:
-        for argument_dict in arguments:
-            parser.add_argument(*argument_dict['name'], **argument_dict['kwargs'])
-
-    if not os.path.exists(ETC):
-        raise CorruptedSourceError(NotADirectoryError(f'Configuration directory {ETC} does not exist!\nTry checking LICHESS_HOME environment variable or reinstalling the program'))
-    
-    parser_file = os.path.join(ETC, 'parser.json')
-    if not os.path.isfile(parser_file):
-        raise CorruptedSourceError(FileNotFoundError(f'Default configuration file {parser_file} does not exist!\nTry checking LICHESS_HOME environment variable or reinstalling the program'))
-    
-    try:
-        parser_dict = json.load(open(parser_file, 'r'))
-    except json.JSONDecodeError as e:
-        raise CorruptedSourceError(e)
-
-    parser = ArgumentParser(**parser_dict['kwargs'], formatter_class=MainCommandFormatter)
-    if parser_dict['parser_type'] == 'subparser':
-        set_subparser(parser, parser_dict['subparser'])
-    elif parser_dict['parser_type'] == 'argument':
-        set_argument(parser, parser_dict)
-
-    return parser.parse_args()
 
 
 class Singleton:
@@ -110,13 +54,9 @@ class Singleton:
         pass
 
 
-class IOHandler(Singleton):
-    def init(self, *args: Any, **kwargs: Dict[str, Any]) -> None:
-        self.verbose = True # default value
-
-    def new(self, verbose: bool | None = None) -> None:
-        if verbose is not None:
-            self.verbose = verbose
+class IOHandler:
+    def __init__(self, verbose: bool = True) -> None:
+        self.verbose = verbose 
     
     def print(self, *args: Any, **kwargs: Dict[str, Any]) -> None:
         if self.verbose:
@@ -150,12 +90,3 @@ class BaseCommandFormatter(HelpFormatter):
             return text.splitlines()
         return super()._split_lines(text, width)
     
-
-class MainCommandFormatter(BaseCommandFormatter):
-    pass
-
-
-class SubCommandFormatter(BaseCommandFormatter):
-    pass
-
-

@@ -10,13 +10,13 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
 from typing import Any, Dict
 
 from lichess.exceptions import LichessError, CorruptedSourceError
-from api import Token
+from lichess.tokens import Token
 
 def main():
     client = None
     token = Token()
     print(token.get('test'))
-    try:
+    """try:
         command = client.get_command()
         if command == 'help':
             subcommand = client.get_subcommand()
@@ -44,7 +44,7 @@ def main():
         type = info[0].__name__
         message = info[1]
         print(__file__, type, message, sep=': ', file=sys.stderr)
-        sys.exit(1)
+        sys.exit(1)"""
 
 if __name__ == '__main__':
     main()

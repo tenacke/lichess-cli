@@ -45,6 +45,11 @@ class ApiError(LichessError):
         super().__init__(get_message(error))
         self.__cause__ = self.error = error
 
+class UserError(LichessError):
+    def __init__(self, error: Exception):
+        super().__init__(get_message(error))
+        self.__cause__ = self.error = error
+
 
 class ResponseError(ApiError):
     """Response that indicates an error."""

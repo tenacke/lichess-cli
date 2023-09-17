@@ -7,8 +7,6 @@ from .formats import TextHandler
 from .requests import RequestClient
 from .session import Session
 from .session import Requestor
-from .config import Config
-from .tokens import Token
 
 __all__ = [
     "BaseResponseFormatHandler",
@@ -18,6 +16,4 @@ __all__ = [
     "RequestClient",
     "Session",
     "Requestor",
-    "Config",
-    "Token",
 ]
