@@ -68,6 +68,12 @@ class Args(BaseClient):
             return getattr(self.args, argument)
         raise KeyError(f'Argument {argument} not found')
     
+    def get_arguments(self) -> Dict[str, Any]:
+        arguments_dict = self.args.__dict__.copy()
+        arguments_dict.pop('command')
+        arguments_dict.pop('subcommand')
+        return arguments_dict
+    
     def get_command(self) -> str:
         if hasattr(self.args, 'command'):
             return self.args.command

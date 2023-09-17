@@ -60,6 +60,8 @@ class Token(BaseClient):
         self.data = {}
 
     def add(self, key: str, token: str, yes: bool = False) -> None:
+        key = key[0]
+        token = token[0]
         if key in self.data:
             if not yes and self.io.input(f'Key {key} already exists\nDo you want to overwrite? [y/N] ').lower() != 'y':
                 return
@@ -73,6 +75,7 @@ class Token(BaseClient):
         self.io.print(f'Key {key} added')
 
     def remove(self, key: str) -> None:
+        key = key[0]
         if key not in self.data:
             raise UserError(KeyError(f'Key {key} not found'))
         try:
@@ -85,19 +88,20 @@ class Token(BaseClient):
         self.io.print(f'Key {key} deleted safely')
 
     def get(self, key: str) -> str:
+        key = key[0]
         if key not in self.data:
             raise UserError(KeyError(f'Key {key} not found'))
         self.io.print(self.data[key])
 
     def list(self, keys: bool = False, tokens: bool = False) -> Dict | Set:
         if (keys and tokens):
-            self.io.print(f'{key}: {token}\n' for key, token in self.data.items())
+            self.io.print(*[f'{key}: {token}' for key, token in self.data.items()], sep='\n')
         elif keys:
             self.io.print(*self.data.keys(), sep='\n')
         elif tokens:
             self.io.print(*self.data.values(), sep='\n')
         else:
-            self.io.print(f'{key}: {token}\n' for key, token in self.data.items())
+            self.io.print(*[f'{key}: {token}' for key, token in self.data.items()], sep='\n')
 
     def clear(self, yes: bool = False) -> None:
         if yes or self.io.input('Do you want to clear all tokens? [y/N] ').lower() == 'y':
@@ -176,7 +180,7 @@ class GPGHandler(FileHandler):
 
     def save_user(self) -> None:
         try:
-            self.config.set('user.email', self.user)
+            self.config.set(['user.email'], self.user)
         except LichessError as e:
             self.io.print('Error saving user email')
         else:
