@@ -3,14 +3,14 @@ from __future__ import annotations
 from lichess.base import BaseClient
 from lichess.utils import Singleton
 
-class Relation(Singleton):
-    _instance: Relation | None = None
+class Relations(Singleton):
+    _instance: Relations | None = None
 
     def init(self) -> None:
         pass
 
-class RelationClient(BaseClient):
-    _instance: RelationClient | None = None
+class RelationsClient(BaseClient):
+    _instance: RelationsClient | None = None
 
     def init(self) -> None:
-        self.broadcast = Relation()
+        self.broadcast = Relations()

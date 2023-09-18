@@ -2,8 +2,8 @@ from __future__ import annotations
 
 from .base import BaseClient
 from .args import Args
-from .config import Config
-from .tokens import Token
+from .config import Config, ConfigClient
+from .tokens import Token, TokenClient
 from .client import LichessClient
 from .exceptions import LichessError
 from .exceptions import ApiError
@@ -22,7 +22,9 @@ __all__ = [
     'BaseClient',
     'Args',
     'Config',
+    'ConfigClient',
     'Token',
+    'TokenClient',
     'LichessClient',
     'LichessError',
     'ApiError',
