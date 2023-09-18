@@ -5,7 +5,7 @@ from configparser import RawConfigParser, ConfigParser, ParsingError
 from typing import Dict, Any
 
 from .base import BaseClient
-from .utils import IOHandler, ETC
+from .utils import IOHandler, Singleton, ETC
 from .exceptions import CorruptedSourceError, UserError
 
 
@@ -34,7 +34,7 @@ def parse_config(include_defaults: bool = True) -> RawConfigParser:
     return config
 
 
-class Config(BaseClient):
+class Config(Singleton):
     _instance: Config | None = None
 
     def init(self, *args: Any, **kwargs: Dict[str, Any]) -> None:
@@ -69,8 +69,26 @@ class Config(BaseClient):
         if not self.config.has_option(section, option):
             raise KeyError(f'Option {option} not found in section {section}')
         return self.config.get(section, option)
+
+    def check_valid_key(self, key):
+        if key.count('.') != 1:
+            raise UserError(ValueError('Invalid format. You should use the format section.option'))
+            
+        section, option = key.split('.')
+        if not self.config.has_section(section):
+            raise UserError(KeyError(f'Section {section} not found'))
+        
+        if not self.config.has_option(section, option):
+            raise UserError(KeyError(f'Option {option} not found in section {section}'))
+        
+        return section, option
     
-    def get(self, key: str) -> str:
+    
+class ConfigClient(BaseClient):
+    def init(self, *args: Any, **kwargs: Dict[str, Any]) -> None:
+        self.config = Config(verbose=True)
+
+    def get(self, key: str) -> None:
         key = key[0]
         section, option = self.check_valid_key(key)
         self.io.print(f'{key}: {self.get_option(section, option)}')
@@ -95,16 +113,3 @@ class Config(BaseClient):
             self.set_option(section, option, temp)
             self.io.print(f'Error setting {key}')
             raise UserError(e)
-
-    def check_valid_key(self, key):
-        if key.count('.') != 1:
-            raise UserError(ValueError('Invalid format. You should use the format section.option'))
-            
-        section, option = key.split('.')
-        if not self.config.has_section(section):
-            raise UserError(KeyError(f'Section {section} not found'))
-        
-        if not self.config.has_option(section, option):
-            raise UserError(KeyError(f'Option {option} not found in section {section}'))
-        
-        return section, option
