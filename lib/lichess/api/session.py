@@ -6,7 +6,10 @@ from typing import Any, Dict, Iterator, TypeVar
 
 from .formats import BaseResponseFormatHandler, Params, Data, Converter
 from lichess.utils import noop
-from lichess.exceptions import ApiError, ResponseError
+from lichess.exceptions import ApiError, ResponseError, CLIError
+from lichess.base import BaseClient
+from lichess.tokens import Token
+from lichess.config import Config
 
 """
     This module is a copy of the utils package from the berserk library, with some modifications.
@@ -18,13 +21,33 @@ from lichess.exceptions import ApiError, ResponseError
 T = TypeVar("T")
 
 
-class Requestor:
-    def __init__(
-        self, session: requests.Session, base_url: str, default_fmt: BaseResponseFormatHandler[T]
+class Requestor(BaseClient):
+    _instance: Requestor | None = None
+
+    def init(
+        self, *args: Any, **kwargs: Dict[str, Any]
     ):
-        self.session = session
+        self.token_key = None
+        self.session = None
+
+    def new(self, base_url: str, default_fmt: BaseResponseFormatHandler[T], token_key: str | None = None) -> None:
         self.base_url = base_url
         self.default_fmt = default_fmt
+        if token_key is not None and self.token_key != token_key:
+            self.create_session(token_key=token_key)
+        elif self.session is None:
+            self.create_session(token_key=Config().get_option('token', 'key'))
+
+    def create_session(self, token_key: str) -> None:
+        self.token_key = token_key
+        if self.token_key == '':
+            raise CLIError(ValueError("No token key provided. See 'lichess token --help' for more information."))
+        
+        token_handler = Token()
+        self.token = token_handler.get_token(self.token_key)
+        session = Session(self.token)
+    
+        self.session = session
 
     def request(
         self,

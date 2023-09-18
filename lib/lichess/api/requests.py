@@ -5,17 +5,22 @@ from typing import Any, Dict, Iterator
 from .session import Session, Requestor
 from .formats import JSON, Params, Data, BaseResponseFormatHandler, Converter
 from lichess.base import BaseClient
+from lichess.tokens import Token
 from lichess.utils import noop
+from lichess.config import Config
+from lichess.exceptions import CLIError
 
 # Requests Client API for lichess package
 
 class RequestClient(BaseClient):
     _instance: RequestClient | None = None
 
-    def init(self,  base_url: str, session: Session | None = None):
-        self._r = Requestor(session, base_url, default_fmt=JSON)
+    def init(self, *args: Any, **kwargs: Dict[str, Any]):
+        pass
 
-    
+    def new(self, base_url: str, token_key: str | None = None) -> None:
+        self._r = Requestor(base_url=base_url, default_fmt=JSON, token_key=token_key)
+
     def get(self,
             path: str,
             *,
