@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import os
+os.environ['LICHESS_HOME'] = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
 import sys
 import inspect
 
@@ -9,7 +11,6 @@ from lichess.args import Args
 from lichess.config import Config
 from lichess.client import LichessClient
 from lichess.exceptions import UserError
-
 
 if __name__ == '__main__':
     try:
