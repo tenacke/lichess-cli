@@ -2,13 +2,10 @@ from __future__ import annotations
 
 from typing import Any, Dict, Iterator
 
-from .session import Session, Requestor
+from .session import Requestor
 from .formats import JSON, Params, Data, BaseResponseFormatHandler, Converter
 from lichess.base import BaseClient
-from lichess.tokens import Token
 from lichess.utils import noop
-from lichess.config import Config
-from lichess.exceptions import CLIError
 
 # Requests Client API for lichess package
 
@@ -18,7 +15,7 @@ class RequestClient(BaseClient):
     def init(self, *args: Any, **kwargs: Dict[str, Any]):
         pass
 
-    def new(self, base_url: str, token_key: str | None = None) -> None:
+    def new(self, base_url: str, token_key: str | None) -> None:
         self._r = Requestor(base_url=base_url, default_fmt=JSON, token_key=token_key)
 
     def get(self,

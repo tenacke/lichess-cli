@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import sys
+import inspect
 
 from lichess.args import Args
 from lichess.config import Config
@@ -14,10 +15,20 @@ if __name__ == '__main__':
     try:
         args = Args()
         config = Config()
-        client = LichessClient(verbose=True)
+        lichess = LichessClient(verbose=True)
+
+        command = args.get_command()
+        subcommand = args.get_subcommand()
         arguments = args.get_arguments()
-        module = getattr(client, args.get_command())(**arguments)
-        getattr(module, args.get_subcommand())(**arguments)
+
+        module = getattr(lichess, command)
+        module_parameters = inspect.signature(module).parameters
+        client = module(**{k: arguments[k] for k in module_parameters})
+
+        method = getattr(client, subcommand)
+        method_parameters = inspect.signature(method).parameters
+        method(**{k: arguments[k] for k in method_parameters})
+
     except UserError:
         info = sys.exc_info()
         message = info[1]

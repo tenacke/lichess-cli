@@ -1,6 +1,6 @@
 from __future__ import annotations
 import json
-from typing import Any, Callable, Dict, Generic, Iterator, Mapping, List, Type, TypeVar, Union, cast
+from typing import Any, Callable, Dict, Iterator, Mapping, List, Type, TypeVar, Union, cast
 
 import ndjson  # type: ignore
 from requests import Response
