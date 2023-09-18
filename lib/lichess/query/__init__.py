@@ -1,17 +1,17 @@
 from __future__ import annotations
 
-from .account import Account
-from .broadcast import Broadcast
-from .explorer import Explorer
-from .game import Game
-from .message import Message
-from .relations import Relations
-from .study import Study
-from .tablebase import Tablebase
-from .team import Team
-from .tournament import Tournament
-from .tv import TV
-from .user import User
+from .account import Account, AccountClient
+from .broadcast import Broadcast, BroadcastClient
+from .explorer import Explorer, ExplorerClient
+from .game import Game, GameClient
+from .message import Message, MessageClient
+from .relations import Relations, RelationsClient
+from .study import Study, StudyClient
+from .tablebase import Tablebase, TablebaseClient
+from .team import Team, TeamClient
+from .tournament import Tournament, TournamentClient
+from .tv import TV, TVClient
+from .user import User, UserClient
 from .client import QueryClient
 
 __all__ = [
@@ -27,5 +27,17 @@ __all__ = [
     "Tournament",
     "TV",
     "User",
-    "QueryClient"
+    "QueryClient",
+    "AccountClient",
+    "BroadcastClient",
+    "ExplorerClient",
+    "GameClient",
+    "MessageClient",
+    "RelationsClient",
+    "StudyClient",
+    "TablebaseClient",
+    "TeamClient",
+    "TournamentClient",
+    "TVClient",
+    "UserClient",
 ]
