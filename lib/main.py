@@ -15,8 +15,9 @@ if __name__ == '__main__':
         args = Args()
         config = Config()
         client = LichessClient(verbose=True)
-        module = getattr(client, args.get_command())()
-        getattr(module, args.get_subcommand())(**args.get_arguments())
+        arguments = args.get_arguments()
+        module = getattr(client, args.get_command())(**arguments)
+        getattr(module, args.get_subcommand())(**arguments)
     except UserError:
         info = sys.exc_info()
         message = info[1]

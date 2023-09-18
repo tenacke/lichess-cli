@@ -18,64 +18,64 @@ class LichessClient(BaseClient):
     def init(self, *args: Any, **kwargs: Dict[str, Any]) -> None:
         pass
 
-    def config(self) -> ConfigClient:
+    def config(self, **kwargs: Dict[str, Any]) -> ConfigClient:
         return ConfigClient()
 
-    def token(self) -> TokenClient:
+    def token(self, **kwargs: Dict[str, Any]) -> TokenClient:
         return TokenClient()
     
-    def board(self) -> BoardClient:
+    def board(self, **kwargs: Dict[str, Any]) -> BoardClient:
         return BoardClient()
     
-    def bot(self) -> BotClient:
+    def bot(self, **kwargs: Dict[str, Any]) -> BotClient:
         return BotClient()
     
-    def bulk(self) -> BulkClient:
+    def bulk(self, **kwargs: Dict[str, Any]) -> BulkClient:
         return BulkClient()
     
-    def challenge(self) -> ChallengeClient:
+    def challenge(self, **kwargs: Dict[str, Any]) -> ChallengeClient:
         return ChallengeClient()
     
-    def puzzle(self) -> PuzzleClient:
+    def puzzle(self, **kwargs: Dict[str, Any]) -> PuzzleClient:
         return PuzzleClient()
     
-    def simuls(self) -> SimulsClient:
+    def simuls(self, **kwargs: Dict[str, Any]) -> SimulsClient:
         return SimulsClient()
     
-    def account(self, key: List | None, **kwargs) -> AccountClient:
+    def account(self, key: List | None, **kwargs: Dict[str, Any]) -> AccountClient:
         if key is not None:
             key = key[0]
         return AccountClient(token_key=key)
     
-    def broadcast(self) -> BroadcastClient:
+    def broadcast(self, **kwargs: Dict[str, Any]) -> BroadcastClient:
         return BroadcastClient()
     
-    def explorer(self) -> ExplorerClient:
+    def explorer(self, **kwargs: Dict[str, Any]) -> ExplorerClient:
         return ExplorerClient()
     
-    def game(self) -> GameClient:
+    def game(self, **kwargs: Dict[str, Any]) -> GameClient:
         return GameClient()
     
-    def message(self) -> MessageClient:
+    def message(self, **kwargs: Dict[str, Any]) -> MessageClient:
         return MessageClient()
     
-    def relations(self) -> RelationsClient:
+    def relations(self, **kwargs: Dict[str, Any]) -> RelationsClient:
         return RelationsClient()
     
-    def study(self) -> StudyClient:
+    def study(self, **kwargs: Dict[str, Any]) -> StudyClient:
         return StudyClient()
     
-    def tablebase(self) -> TablebaseClient:
+    def tablebase(self, **kwargs: Dict[str, Any]) -> TablebaseClient:
         return TablebaseClient()
     
-    def team(self) -> TeamClient:
+    def team(self, **kwargs: Dict[str, Any]) -> TeamClient:
         return TeamClient()
     
-    def tournament(self) -> TournamentClient:
+    def tournament(self, **kwargs: Dict[str, Any]) -> TournamentClient:
         return TournamentClient()
     
-    def tv(self) -> TVClient:
+    def tv(self, **kwargs: Dict[str, Any]) -> TVClient:
         return TVClient()
     
-    def user(self) -> UserClient:
+    def user(self, **kwargs: Dict[str, Any]) -> UserClient:
         return UserClient()
