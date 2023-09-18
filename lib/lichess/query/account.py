@@ -1,60 +1,66 @@
 from __future__ import annotations
 
-from argparse import Namespace
-from configparser import RawConfigParser
 from typing import Any, Dict, Iterator
 
-from lichess.utils import convert_to_boolean
+from lichess.utils import convert_to_boolean, Singleton, IOHandler
 from lichess.base import BaseClient
 from .client import QueryClient
 
-BASE_URL = None
+API_URL = "https://lichess.org"
 
+class Account(Singleton):
+    _instance: Account | None = None
 
-class Account(BaseClient):
-    pass
+    def init(self, *args: Any, **kwargs: Dict[str, Any]) -> None:
+        self.query = QueryClient(base_url=API_URL, token_key=kwargs.get('token_key', None))
 
-def info(api: QueryClient, ) -> Dict[str, Any] | Iterator[Any]:
-    path = '/api/account'
-    return api.get(path)
+    def get_info(self, ) -> Dict[str, Any] | Iterator[Any]:
+        path = '/api/account'
+        return self.query.get(path)
 
+    def get_email(self, ) -> str:
+        path = '/api/account/email'
+        return self.query.get(path)['email']
 
-def email(api: QueryClient, ) -> str:
-    path = '/api/account/email'
-    return api.get(path)['email']
+    def get_preferences(self, ):
+        path = '/api/account/preferences'
+        return self.query.get(path)
 
+    def get_kid_status(self):
+        path = '/api/account/kid'
+        return self.query.get(path)['kid']
 
-def preferences(api: QueryClient, ):
-    path = '/api/account/preferences'
-    return api.get(path)
-
-
-def kid(api: QueryClient, value: bool = None):
-    path = '/api/account/kid'
-    if value is not None:
+    def set_kid_status(self, value: bool):
+        path = '/api/account/kid'
         params = {'v': convert_to_boolean(value)}
-        return api.post(path, params=params)
-    else:
-        return api.get(path)['kid']
+        return self.query.post(path, params=params)
 
-
-def bot(api: QueryClient, ):
-    path = '/api/bot/account/upgrade'
-    return api.post(path)
-
-
-def main(args: Namespace, config: RawConfigParser):
-    key = args.key[0] if args.key else None
-    api = QueryClient(base_url=BASE_URL, token_key=key)
+    def upgrade_bot(self, ):
+        path = '/api/bot/account/upgrade'
+        return self.query.post(path)
     
-    subcommand = args.subcommand
-    if subcommand == 'info':
-        print(info(api))
-    elif subcommand == 'email':
-        print(email(api))
-    elif subcommand == 'preferences':
-        print(preferences(api))
-    elif subcommand == 'kid':
-        print(kid(api, args.mode))
-    elif subcommand == 'bot':
-        print(bot(api))
+
+class AccountClient(BaseClient):
+    _instance: AccountClient | None = None
+
+    def init(self, *args: Any, token_key: str | None, **kwargs: Dict[str, Any]) -> None:
+        self.account = Account(token_key=token_key)
+        self.io = IOHandler(verbose=True)
+
+    def info(self, ) -> None:
+        self.io.print(self.account.get_info())
+
+    def email(self, ) -> None:
+        self.io.print(self.account.get_email())
+
+    def preferences(self, ) -> None:
+        self.io.print(self.account.get_preferences())
+
+    def kid(self, mode: bool | None) -> None:
+        if mode is not None:
+            self.io.print(self.account.set_kid_status(mode))
+        else:
+            self.io.print(self.account.get_kid_status())
+
+    def bot(self, ) -> None:
+        self.io.print(self.account.upgrade_bot())

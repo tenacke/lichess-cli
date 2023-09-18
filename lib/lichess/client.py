@@ -1,78 +1,81 @@
 from __future__ import annotations
-from typing import Any, Dict
+
+from typing import Any, Dict, List
 
 from .base import BaseClient
-from .config import Config
-from .tokens import Token
+from .config import ConfigClient
+from .tokens import TokenClient
 from lichess.play import (
-    Board, Bot, Bulk, Challenge, Puzzle, Simuls
+    BoardClient, BotClient, BulkClient, ChallengeClient, PuzzleClient, SimulsClient
 )
 from lichess.query import (
-    Account, Broadcast, Explorer, Game, Message, Relations, Study, Tablebase, Team, Tournament, TV, User
+    AccountClient, BroadcastClient, ExplorerClient, GameClient, MessageClient, RelationsClient, StudyClient, TablebaseClient, TeamClient, TournamentClient, TVClient, UserClient
 )
 
 class LichessClient(BaseClient):
     _instance: LichessClient | None = None
 
     def init(self, *args: Any, **kwargs: Dict[str, Any]) -> None:
-        self.verbose = kwargs.get('verbose', True)
+        pass
 
-    def config(self) -> Config:
-        return Config(self.verbose)
+    def config(self) -> ConfigClient:
+        return ConfigClient()
 
-    def token(self) -> Token:
-        return Token(self.verbose)
+    def token(self) -> TokenClient:
+        return TokenClient()
     
-    def board(self) -> Board:
-        return Board(self.verbose)
+    def board(self) -> BoardClient:
+        return BoardClient()
     
-    def bot(self) -> Bot:
-        return Bot(self.verbose)
+    def bot(self) -> BotClient:
+        return BotClient()
     
-    def bulk(self) -> Bulk:
-        return Bulk(self.verbose)
+    def bulk(self) -> BulkClient:
+        return BulkClient()
     
-    def challenge(self) -> Challenge:
-        return Challenge(self.verbose)
+    def challenge(self) -> ChallengeClient:
+        return ChallengeClient()
     
-    def puzzle(self) -> Puzzle:
-        return Puzzle(self.verbose)
+    def puzzle(self) -> PuzzleClient:
+        return PuzzleClient()
     
-    def simuls(self) -> Simuls:
-        return Simuls(self.verbose)
+    def simuls(self) -> SimulsClient:
+        return SimulsClient()
     
-    def account(self) -> Account:
-        return Account(self.verbose)
+    def account(self, key: List | None, **kwargs) -> AccountClient:
+        if key is not None:
+            key = key[0]
+        return AccountClient(token_key=key)
     
-    def broadcast(self) -> Broadcast:
-        return Broadcast(self.verbose)
+    def broadcast(self) -> BroadcastClient:
+        return BroadcastClient()
     
-    def explorer(self) -> Explorer:
-        return Explorer(self.verbose)
+    def explorer(self) -> ExplorerClient:
+        return ExplorerClient()
     
-    def game(self) -> Game:
-        return Game(self.verbose)
+    def game(self) -> GameClient:
+        return GameClient()
     
-    def message(self) -> Message:
-        return Message(self.verbose)
+    def message(self) -> MessageClient:
+        return MessageClient()
     
-    def relations(self) -> Relations:
-        return Relations(self.verbose)
+    def relations(self) -> RelationsClient:
+        return RelationsClient()
     
-    def study(self) -> Study:
-        return Study(self.verbose)
+    def study(self) -> StudyClient:
+        return StudyClient()
     
-    def tablebase(self) -> Tablebase:
-        return Tablebase(self.verbose)
+    def tablebase(self) -> TablebaseClient:
+        return TablebaseClient()
     
-    def team(self) -> Team:
-        return Team(self.verbose)
+    def team(self) -> TeamClient:
+        return TeamClient()
     
-    def tournament(self) -> Tournament:
-        return Tournament(self.verbose)
+    def tournament(self) -> TournamentClient:
+        return TournamentClient()
     
-    def tv(self) -> TV:
-        return TV(self.verbose)
+    def tv(self) -> TVClient:
+        return TVClient()
     
-    def user(self) -> User:
-        return User(self.verbose)
+    def user(self) -> UserClient:
+        return UserClient()
