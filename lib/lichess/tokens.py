@@ -13,7 +13,7 @@ from .exceptions import CLIError, LichessError, UserError
 from .base import BaseClient
 from .config import Config
 
-class Token(BaseClient):
+class Token(Singleton):
     _instance: Token | None = None
 
     def init(self, *args: Any, **kwargs: Dict[str, Any]) -> None:
@@ -23,10 +23,6 @@ class Token(BaseClient):
         self.handler = self.get_handler(gpg_enabled)
 
         self.data = self.handler.read()
-        self.temp = None
-
-    def new(self, verbose: bool = True) -> None:
-        self.io = IOHandler(verbose)
 
     def get_handler(self, gpg_enabled: bool) -> FileHandler:
         if gpg_enabled:
@@ -34,16 +30,19 @@ class Token(BaseClient):
         else:
             return JSONHandler()
         
+    def contains(self, key: str) -> bool:
+        return key in self.data
+
     def add_token(self, key: str, token: str) -> None:
-        if key in self.data:
-            self.temp = self.data[key]
         self.data[key] = token
         self.handler.write(self.data)
+
+    def revert_token(self, key: str, token: str) -> None:
+        self.data[key] = token
 
     def remove_token(self, key: str) -> None:
         if key not in self.data:
             raise KeyError(f'Key {key} not found')
-        self.temp = self.data[key]
         del self.data[key]
         self.handler.write(self.data)
 
@@ -59,54 +58,62 @@ class Token(BaseClient):
         self.handler.write({})
         self.data = {}
 
+
+class TokenClient(BaseClient):
+    def init(self, *args: Any, **kwargs: Dict[str, Any]) -> None:
+        self.token_handler = Token()
+        self.io = IOHandler(verbose=True)
+
     def add(self, key: str, token: str, yes: bool = False) -> None:
         key = key[0]
         token = token[0]
-        if key in self.data:
+        temp = None
+        if self.token_handler.contains(key):
             if not yes and self.io.input(f'Key {key} already exists\nDo you want to overwrite? [y/N] ').lower() != 'y':
                 return
+            temp = self.token_handler.get_token(key)
         try:
-            self.add_token(key, token)
+            self.token_handler.add_token(key, token)
         except CLIError as e:
-            self.data[key] = self.temp
-            self.temp = None
+            self.token_handler.revert_token(key, temp)
             self.io.print(f'Error adding key {key}')
             raise UserError(e)
         self.io.print(f'Key {key} added')
 
     def remove(self, key: str) -> None:
         key = key[0]
-        if key not in self.data:
+        if not self.token_handler.contains(key):
             raise UserError(KeyError(f'Key {key} not found'))
+        temp = self.token_handler.get_token(key)
         try:
-            self.remove_token(key)
+            self.token_handler.remove_token(key)
         except CLIError as e:
-            self.data[key] = self.temp
-            self.temp = None
+            self.token_handler.revert_token(key, temp)
             self.io.print(f'Error removing key {key}')
             raise UserError(e)
         self.io.print(f'Key {key} deleted safely')
 
-    def get(self, key: str) -> str:
+    def get(self, key: str) -> None:
         key = key[0]
-        if key not in self.data:
+        if not self.token_handler.contains(key):
             raise UserError(KeyError(f'Key {key} not found'))
-        self.io.print(self.data[key])
+        self.io.print(self.token_handler.get_token(key))
 
-    def list(self, keys: bool = False, tokens: bool = False) -> Dict | Set:
+    def list(self, keys: bool = False, tokens: bool = False) -> None:
+        data = self.token_handler.get_tokens()
         if (keys and tokens):
-            self.io.print(*[f'{key}: {token}' for key, token in self.data.items()], sep='\n')
+            self.io.print(*[f'{key}: {token}' for key, token in data.items()], sep='\n')
         elif keys:
-            self.io.print(*self.data.keys(), sep='\n')
+            self.io.print(*data.keys(), sep='\n')
         elif tokens:
-            self.io.print(*self.data.values(), sep='\n')
+            self.io.print(*data.values(), sep='\n')
         else:
-            self.io.print(*[f'{key}: {token}' for key, token in self.data.items()], sep='\n')
+            self.io.print(*[f'{key}: {token}' for key, token in data.items()], sep='\n')
 
     def clear(self, yes: bool = False) -> None:
         if yes or self.io.input('Do you want to clear all tokens? [y/N] ').lower() == 'y':
             try:
-                self.clear_tokens()
+                self.token_handler.clear_tokens()
             except CLIError as e:
                 self.io.print('Error clearing tokens')
                 raise UserError(e)
@@ -176,7 +183,6 @@ class GPGHandler(FileHandler):
             return_code = subprocess.call(args)
             if return_code != 0:
                 raise CLIError(CalledProcessError(return_code, args))
-
 
     def save_user(self) -> None:
         try:
