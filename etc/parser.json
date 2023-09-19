@@ -333,6 +333,335 @@
                         }
                     ]
                 }
+            },
+            {
+                "kwargs": {
+                    "name": "broadcast",
+                    "help": "Manage broadcasts",
+                    "description": "Manage broadcasts"
+                },
+                "parser_type": "subparser",
+                "subparser": {
+                    "kwargs": {
+                        "dest": "subcommand",
+                        "metavar": "broadcast_command",
+                        "required": true
+                    },
+                    "subparsers": [
+                        {
+                            "kwargs": {
+                                "name": "list",
+                                "help": "List all broadcasts",
+                                "description": "List all broadcasts"
+                            },
+                            "parser_type": "argument",
+                            "args": [
+                                {
+                                    "name": ["-l", "--limit"],
+                                    "kwargs": {
+                                        "help": "Limit the number of broadcasts to list",
+                                        "metavar": "limit",
+                                        "nargs": 1
+                                    }
+                                }
+                            ]
+                        },
+                        {
+                            "kwargs": {
+                                "name": "get",
+                                "help": "Get a broadcast",
+                                "description": "Get a broadcast by id"
+                            },
+                            "parser_type": "argument",
+                            "args": [
+                                {
+                                    "name": ["--id"],
+                                    "kwargs": {
+                                        "help": "ID of the broadcast to get",
+                                        "metavar": "id",
+                                        "nargs": 1
+                                    }
+                                },
+                                {
+                                    "name": ["-s", "--slug"],
+                                    "kwargs": {
+                                        "help": "Slug for SEO",
+                                        "metavar": "slug",
+                                        "nargs": 1
+                                    }
+                                }
+                            ]
+                        },
+                        {
+                            "kwargs": {
+                                "name": "create",
+                                "help": "Create a broadcast",
+                                "description": "Create a broadcast"
+                            },
+                            "parser_type": "argument",
+                            "args": [
+                                {
+                                    "name": ["name"],
+                                    "kwargs": {
+                                        "help": "Name of the broadcast",
+                                        "metavar": "name",
+                                        "nargs": 1
+                                    }
+                                },
+                                {
+                                    "name": ["-d", "--description"],
+                                    "kwargs": {
+                                        "help": "Description of the broadcast",
+                                        "metavar": "description",
+                                        "nargs": 1
+                                    }
+                                },
+                                {
+                                    "name": ["-m", "--markdown"],
+                                    "kwargs": {
+                                        "help": "Long description from markdown file",
+                                        "metavar": "markdown",
+                                        "nargs": 1
+                                    }
+                                },
+                                {
+                                    "name": ["-o", "--official"],
+                                    "kwargs": {
+                                        "help": "Official broadcast can only be created by Lichess staff",
+                                        "action": "store_true"
+                                    }
+                                }
+                            ]
+                        },
+                        {
+                            "kwargs": {
+                                "name": "update",
+                                "help": "Update a broadcast",
+                                "description": "Update a broadcast"
+                            },
+                            "parser_type": "argument",
+                            "args": [
+                                {
+                                    "name": ["--id"],
+                                    "kwargs": {
+                                        "help": "ID of the broadcast to update",
+                                        "metavar": "id",
+                                        "nargs": 1
+                                    }
+                                },
+                                {
+                                    "name": ["-n", "--name"],
+                                    "kwargs": {
+                                        "help": "Name of the broadcast",
+                                        "metavar": "name",
+                                        "nargs": 1
+                                    }
+                                },
+                                {
+                                    "name": ["-d", "--description"],
+                                    "kwargs": {
+                                        "help": "Description of the broadcast",
+                                        "metavar": "description",
+                                        "nargs": 1
+                                    }
+                                },
+                                {
+                                    "name": ["-m", "--markdown"],
+                                    "kwargs": {
+                                        "help": "Long description from markdown file",
+                                        "metavar": "markdown",
+                                        "nargs": 1
+                                    }
+                                },
+                                {
+                                    "name": ["-s", "--slug"],
+                                    "kwargs": {
+                                        "help": "Slug for SEO",
+                                        "metavar": "slug",
+                                        "nargs": 1
+                                    }
+                                },
+                                {
+                                    "name": ["-o", "--official"],
+                                    "kwargs": {
+                                        "help": "Official broadcast can only be created by Lichess staff",
+                                        "action": "store_true"
+                                    }
+                                }
+                            ]
+                        },
+                        {
+                            "kwargs": {
+                                "name": "push-pgn",
+                                "help": "Push PGN to a broadcast round",
+                                "description": "Manually push a PGN to a broadcast round"
+                            },
+                            "parser_type": "argument",
+                            "args": [
+                                {
+                                    "name": ["--id"],
+                                    "kwargs": {
+                                        "help": "ID of the broadcast round to update",
+                                        "metavar": "id",
+                                        "nargs": 1
+                                    }
+                                },
+                                {
+                                    "name": ["-f", "--files"],
+                                    "kwargs": {
+                                        "help": "PGN files to push",
+                                        "metavar": "files",
+                                        "nargs": "+"
+                                    }
+                                }
+                            ]
+                        },
+                        {
+                            "kwargs": {
+                                "name": "get-pgn",
+                                "help": "Get a broadcast games in PGN format",
+                                "description": "Get a broadcast games in PGN format"
+                            },
+                            "parser_type": "argument",
+                            "args": [
+                                {
+                                    "name": ["--id"],
+                                    "kwargs": {
+                                        "help": "ID of the broadcast to get",
+                                        "metavar": "id",
+                                        "nargs": 1
+                                    }
+                                },
+                                {
+                                    "name": ["-s", "--slug"],
+                                    "kwargs": {
+                                        "help": "Slug for SEO",
+                                        "metavar": "slug",
+                                        "nargs": 1
+                                    }
+                                },
+                                {
+                                    "name": ["-r", "--round"],
+                                    "kwargs": {
+                                        "help": "Round id to get round",
+                                        "metavar": "round",
+                                        "nargs": 1
+                                    }
+                                },
+                                {
+                                    "name": ["-o", "--output"],
+                                    "kwargs": {
+                                        "help": "Output file",
+                                        "metavar": "output",
+                                        "nargs": 1
+                                    }
+                                }
+                            ]
+                        },
+                        {
+                            "kwargs": {
+                                "name": "get-round",
+                                "help": "Get a broadcast round",
+                                "description": "Get a broadcast round"
+                            },
+                            "parser_type": "argument",
+                            "args": [
+                                {
+                                    "name": ["--id"],
+                                    "kwargs": {
+                                        "help": "ID of the broadcast round to get",
+                                        "metavar": "id",
+                                        "nargs": 1
+                                    }
+                                }
+                            ]
+                        },
+                        {
+                            "kwargs": {
+                                "name": "create-round",
+                                "help": "Create a broadcast round",
+                                "description": "Create a broadcast round"
+                            },
+                            "parser_type": "argument",
+                            "args": [
+                                {
+                                    "name": ["--id"],
+                                    "kwargs": {
+                                        "help": "ID of the broadcast to create round for",
+                                        "metavar": "id",
+                                        "nargs": 1
+                                    }
+                                },
+                                {
+                                    "name": ["-n", "--name"],
+                                    "kwargs": {
+                                        "help": "Name of the broadcast round",
+                                        "metavar": "name",
+                                        "nargs": 1
+                                    }
+                                },
+                                {
+                                    "name": ["-u", "--url"],
+                                    "kwargs": {
+                                        "help": "Sync URL of the broadcast round",
+                                        "metavar": "syncUrl",
+                                        "nargs": 1
+                                    }
+                                },
+                                {
+                                    "name": ["-s", "--start"],
+                                    "kwargs": {
+                                        "help": "Start time of the broadcast round",
+                                        "metavar": "start",
+                                        "nargs": 1
+                                    }
+                                }
+                            ]
+                        },
+                        {
+                            "kwargs": {
+                                "name": "update-round",
+                                "help": "Update a broadcast round",
+                                "description": "Update a broadcast round"
+                            },
+                            "parser_type": "argument",
+                            "args": [
+                                {
+                                    "name": ["--id"],
+                                    "kwargs": {
+                                        "help": "ID of the broadcast round to update",
+                                        "metavar": "id",
+                                        "nargs": 1
+                                    }
+                                },
+                                {
+                                    "name": ["-n", "--name"],
+                                    "kwargs": {
+                                        "help": "Name of the broadcast round",
+                                        "metavar": "name",
+                                        "nargs": 1
+                                    }
+                                },
+                                {
+                                    "name": ["-u", "--url"],
+                                    "kwargs": {
+                                        "help": "Sync URL of the broadcast round",
+                                        "metavar": "syncUrl",
+                                        "nargs": 1
+                                    }
+                                },
+                                {
+                                    "name": ["-s", "--start"],
+                                    "kwargs": {
+                                        "help": "Start time of the broadcast round",
+                                        "metavar": "start",
+                                        "nargs": 1
+                                    }
+                                }
+                            ]
+                        }
+                    ]
+                }
             }
         ]
     }
