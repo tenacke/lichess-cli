@@ -1,21 +1,13 @@
 from __future__ import annotations
 
-from .board import Board, BoardClient
-from .bot import Bot, BotClient
-from .bulk import Bulk, BulkClient
-from .challenge import Challenge, ChallengeClient
-from .puzzle import Puzzle, PuzzleClient
-from .simuls import Simuls, SimulsClient
-from .client import PlayClient
+from .board import BoardClient
+from .bot import BotClient
+from .bulk import BulkClient
+from .challenge import ChallengeClient
+from .puzzle import PuzzleClient
+from .simuls import SimulsClient
 
 __all__ = [
-    "PlayClient",
-    "Board",
-    "Bot",
-    "Bulk",
-    "Challenge",
-    "Puzzle",
-    "Simuls",
     'BoardClient',
     'BotClient',
     'BulkClient',

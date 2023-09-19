@@ -6,9 +6,9 @@ import subprocess
 
 from tempfile import NamedTemporaryFile
 from subprocess import CalledProcessError
-from typing import Any, Dict, Set
+from typing import Any, Dict
 
-from .utils import convert_to_boolean, Singleton, IOHandler, ETC
+from .utils import convert_to_boolean, Singleton, IOHandler, DATA
 from .exceptions import CLIError, LichessError, UserError
 from .base import BaseClient
 from .config import Config
@@ -131,7 +131,7 @@ class FileHandler(Singleton):
             file_name = prefix + '.gpg'
         else:
             file_name = prefix + '.json'
-        return os.path.join(ETC, file_name)
+        return os.path.join(DATA, file_name)
 
     def read(self) -> Dict:
         raise NotImplementedError('This method must be implemented in the subclass')

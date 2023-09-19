@@ -19,6 +19,7 @@ HOME = os.getenv('LICHESS_HOME')
 if HOME is None:
     HOME = DEFAULT_HOME
 ETC = os.path.join(HOME, 'etc')
+DATA = os.path.join(HOME, 'share', 'data')
 MAN = os.path.join(HOME, 'share', 'mann')
 
 
